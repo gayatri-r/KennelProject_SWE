@@ -51,7 +51,6 @@ const reservation = new mongoose.Schema( {
     departureDate : Date,
     kennelID : Number,
     empID : Number,
-    // createTime : { type: Date, default: Date.now },
     createTime : Date,
     activeFlag : Boolean,
     modifiedDate : Date

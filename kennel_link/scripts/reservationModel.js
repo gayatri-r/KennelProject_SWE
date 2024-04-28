@@ -52,11 +52,12 @@ async function getAvailability(start, end) {
     });
 
     // curerently gives an array of those taken during the time --> need those NOT taken 
-    res_taken.forEach(function(record){
+    res_taken.forEach((record) => {
         taken.push(record.kennelID)
     });
 
-    let available = (await all_kennels).filter( (elem) => !taken.includes(elem))
+    let available = (await all_kennels).filter( (elem) => taken.includes(elem))
+    console.log("available kennels", available);
     return available;
 }
 
@@ -71,11 +72,12 @@ async function getNextRID() {
     }
 }
 
+
 async function findPetID(petName, ownerID) {
     const pet = await Pet.findOne({ownerID: ownerID, petName: petName});
     console.log("Pet ID: ", pet.petID)
-    const petID = pet.petID;
-    return petID;
+    const petId = pet.petID;
+    return petId;
 }
 
 async function findOwnerID(clientFirst, clientLast) {
@@ -120,6 +122,7 @@ async function addReservationWithCheck(ownerFN, ownerLN, pet_name, arrival, depa
     }
 }
 
+// TODO: make cancel Res delete the reservation
 async function cancelRes(ID) {
     try {
         const result = await Reservation.updateOne({ RID: ID }, {$set: {activeFlag: false} });
@@ -128,14 +131,14 @@ async function cancelRes(ID) {
             return false;
           } else {
             console.log("Reservation Deleted Successfully");
-            // const trans = await Transaction.getTransByRID(ID);
-            // const worked = await Transaction.cancelTrans(trans.TID);
-            // if(worked) {
+            const trans = await Transaction.getTransByRID(ID);
+            const worked = await Transaction.cancelTrans(trans.TID);
+            if(worked) {
                 return true;
-            // } else {
-            //     console.log("Reservation Deleted but Transaction was not")
-            //     return false;
-            // }
+            } else {
+                console.log("Reservation Deleted but Transaction was not")
+                return false;
+            }
           }
     } catch(error) {
         console.log("Reservation Not Found", error);
