@@ -7,6 +7,8 @@ const {getPetById} = require("../scripts/petModel.js");
 const Pet = require('../scripts/petModel.js');
 const { checkForDuplicates } = require("../scripts/petModel.js");
 
+// Change
+
 jest.mock('../scripts/signupLoginModel.js', () => ({
   authenticateLogin: jest.fn(),
   uniqueUser: jest.fn(),
