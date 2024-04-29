@@ -4,6 +4,7 @@ const Pet = require("../db_modules/pet")
 async function getPetById(pet_id) {
   try {
     const pet_record = await Pet.findOne({petID: pet_id, activeFlag: true});
+    console.log("Pet_record:",pet_record)
     if (!pet_record) {
       console.log("petID undefined");
     }

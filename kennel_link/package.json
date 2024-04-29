@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles --forceExit",
     "start": "node ./bin/www",
     "dev": "nodemon app.js",
     "serve": "node app.js"
