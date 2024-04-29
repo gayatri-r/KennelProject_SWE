@@ -95,7 +95,7 @@ async function addReservationWithCheck(ownerFN, ownerLN, pet_name, arrival, depa
         const ownerID = await findOwnerID(ownerFN, ownerLN);
         const resID = await getNextRID();
         const resPetID = await findPetID(pet_name, ownerID);
-        if(available_kennels === undefined || available_kennels.length == 0) {
+        if(available_kennels == undefined || available_kennels.length == 0 || available_kennels[0] == null) {
             console.log("No available kennels");
             return {worked: false, message: "No available kennels", RID: 0}; 
         }
