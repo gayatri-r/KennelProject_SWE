@@ -101,7 +101,7 @@ app.post("/signup", async (req, res) => {
 
 app.get("/logout", (req,res) => {
   req.session.destroy();
-  res.redirect("/login")
+  res.redirect("/")
 })
 
 app.get("/dashboard", (req,res) => {
@@ -169,12 +169,22 @@ app.get("/res_edit", async (req,res) => {
   try {
     const found_res = await reservation.getResById(parseInt(resID));
     if (!found_res) {
-      return res.status(404).send("Reservation not found");
+      const user = req.session.user
+      res.status(404).send(
+        '<script> alert("Reservation not found"); </script>'+
+        '<script> window.location.href = "/reservations"; </script>'
+      );
+      //res.status(404).send("Reservation not found");
     }
     res.render("pages/res_edit", { found_res: found_res, type: user_type });
   } catch (error) {
     console.error("Error fetching client data:", error);
-    res.status(500).send("Internal Server Error");
+    const user = req.session.user
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/reservations"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -185,7 +195,11 @@ app.post("/update_res/:RID", async (req,res) => {
     // Update the client information in the database
     const result = reservation.editRes(res_ID, new_arrival_date, new_depart_date)
     if(result) {
-      res.status(200).send("Reservation updated successfully");
+      res.status(200).send(
+        '<script> alert("Reservation updated successfully"); </script>'+
+        '<script> window.location.href = "/reservations"; </script>'
+      );
+      //res.status(200).send("Reservation updated successfully");
     } else {
       console.log("Error Updating Reservation")
     }
@@ -201,7 +215,11 @@ app.post("/cancel_res/:RID", async (req,res) => {
     if(parseInt(res_ID) == entered) {
       const result = await reservation.cancelRes(parseInt(res_ID))
       if(result) {
-        res.status(200).send("Reservation deleted successfully");
+        res.status(200).send(
+          '<script> alert("Reservation deleted successfully"); </script>'+
+          '<script> window.location.href = "/reservations"; </script>'
+        );
+        //res.status(200).send("Reservation deleted successfully");
       } else {
         console.log("Error")
       }
@@ -260,12 +278,16 @@ app.get("/add_pets", async (req, res) => {
       }
     } else {
       // If no user is logged in, you might want to redirect them to a login page or handle it in another way
-      res.redirect("/login"); // For example, redirect to a login page
+      res.redirect("/"); // For example, redirect to a login page
     }
 
   } catch (error) {
     console.error("Error fetching clients:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -302,7 +324,11 @@ app.post("/add_pets", async (req, res) => {
     }
   } catch (error) {
     console.error("Error adding pet:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -325,8 +351,12 @@ app.get("/emp_clients_search", async (req,res) => {
     const result = await client.getAllClients(currentPage, pageSize);
     res.render("pages/emp_clients_search", { clients: result, currentPage });
   } catch (error) {
-    res.status(500).json({ message: error.message });
-    res.redirect('/emp_clients');
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/emp_clients"; </script>'
+    );
+    //res.status(500).json({ message: error.message });
+    //res.redirect('/emp_clients');
   }
 });
 
@@ -347,12 +377,19 @@ app.get("/emp_clients_edit", async (req, res) => {
   try {
     const found_client = await client.getClientById(parseInt(clientId)); // Fetch the client data
     if (!found_client) {
-      return res.status(404).send("Client not found");
+      return res.status(404).send(
+        '<script> alert("Client not found"); </script>'+
+        '<script> window.location.href = "/emp_clients"; </script>'
+      );
+      //return res.status(404).send("Client not found");
     }
     res.render("pages/emp_clients_edit", { found_client: found_client }); // Pass the client data to the template
   } catch (error) {
     console.error("Error fetching client data:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
   }
 });
 
@@ -365,13 +402,21 @@ app.post("/delete_client/:clientID", async (req, res) => {
     const result = await client.removeClient(clientID)
     // Client deleted successfully
     if(result) {
-      res.status(200).send("Client deleted successfully");
+      res.status(200).send(
+        '<script> alert("Client deleted successfully"); </script>'+
+        '<script> window.location.href = "/emp_clients"; </script>'
+      );
+      //res.status(200).send("Client deleted successfully");
     } else {
       console.log("Error")
     }
   } catch (error) {
     console.error("Error deleting client:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -391,7 +436,11 @@ app.post("/update_client/:clientID", async (req, res) => {
     }
   } catch (error) {
     console.error("Error updating client:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -408,7 +457,11 @@ app.get("/pets_search", async (req,res) => {
     const pet_owners_name = pet_owners.map(pet_owner => `${pet_owner.clientFN} ${pet_owner.clientLN}`);
     res.render("pages/pets_search", { pets: pet_records, owner_names: pet_owners_name, currentPage_pets, type: user_type});
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).send(
+        '<script> alert("Internal Server Error"); </script>'+
+        '<script> window.location.href = "/"; </script>'
+      );
+      //res.status(500).json({ message: error.message });
     }
   }
   else if(user_type == 'Client') {
@@ -439,12 +492,20 @@ app.get("/pets_edit", async (req, res) => {
   try {
     const found_pet = await pet.getPetById(parseInt(petId)); // Fetch the client data
     if (!found_pet) {
-      return res.status(404).send("Pet not found");
+      return res.status(404).send(
+        '<script> alert("Pet not found"); </script>'+
+        '<script> window.location.href = "/pets"; </script>'
+      );
+      //return res.status(404).send("Pet not found");
     }
     res.render("pages/pets_edit", { found_pet: found_pet, message: "" }); // Pass the client data to the template
   } catch (error) {
     console.error("Error fetching pet data:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -459,11 +520,19 @@ app.post("/delete_pet/:petID", async (req, res) => {
     if(result) {
       res.redirect("/pets_search")
     } else {
-      res.status(200).send("Unsuccessful pet deletion");
+      res.status(200).send(
+        '<script> alert("Unsuccessful pet deletion"); </script>'+
+        '<script> window.location.href = "/pets"; </script>'
+      );
+      //res.status(200).send("Unsuccessful pet deletion");
     }
   } catch (error) {
     console.error("Error deleting pet:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -476,14 +545,26 @@ app.post("/update_pet/:petID", async (req, res) => {
     // Update the pet information in the database
     const result = await pet.editPet(petID, petName, petType, petBreed, petSex, petDOB, petWeight);
     if (result) {
-      res.status(200).send("Pet updated successfully");
+      res.status(200).send(
+        '<script> alert("Pet updated successfully"); </script>'+
+        '<script> window.location.href = "/pets"; </script>'
+      );
+      //res.status(200).send("Pet updated successfully");
     } else {
       // If the result is false, it means the pet was not found or the update failed
-      res.status(400).send("Failed to update pet");
+      res.status(400).send(
+        '<script> alert("Failed to update pet"); </script>'+
+        '<script> window.location.href = "/transactions"; </script>'
+      );
+      //res.status(400).send("Failed to update pet");
     }
   } catch (error) {
     console.error("Error updating pet:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -512,7 +593,11 @@ app.get("/transactions_search", async (req,res) => {
       res.render("pages/transactions_search", { trans: trans_records, client_name: clientName, currentPage_trans, type: user_type});
     } 
   }catch(error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).json({ message: error.message });
   }
   // else {}
 });
@@ -542,12 +627,20 @@ app.get("/transactions_edit", async (req, res) => {
     const found_trans = await transaction.getTranById(parseInt(transId)); // Fetch the client data
     const clientName = req.query.client;
     if (!found_trans) {
+      res.status(404).send(
+        '<script> alert("Transaction not found"); </script>'+
+        '<script> window.location.href = "/transactions"; </script>'
+      );
       return res.status(404).send("Transaction not found");
     }
     res.render("pages/transactions_edit", { found_trans: found_trans , client_name: clientName}); // Pass the client data to the template
   } catch (error) {
     console.error("Error fetching transaction data:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -559,13 +652,24 @@ app.post("/update_transaction/:TID", async (req, res) => {
   try {
     const result = await transaction.updateTransaction(tranID, transAmount);
     if (!result) {
-      return res.status(404).send("Transaction not found");
+      return res.status(404).send(
+        '<script> alert("Transaction not found"); </script>'+
+        '<script> window.location.href = "/transactions"; </script>'
+      );
+      //return res.status(404).send("Transaction not found");
     }
-
-    res.status(200).send("Transaction updated successfully");
+    res.status(200).send(
+      '<script> alert("Transaction updated successfully"); </script>'+
+      '<script> window.location.href = "/transactions"; </script>'
+    );
+    //res.status(200).send("Transaction updated successfully");
   } catch (error) {
     console.error("Error updating transaction:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).send("Internal Server Error");
   }
 });
 
@@ -598,7 +702,11 @@ app.get("/reservations_search", async (req,res) => {
     } 
   }catch(error) {
     console.log(error)
-    res.status(500).json({ message: error.message });
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).json({ message: error.message });
   }
   // else {}
 });
@@ -629,7 +737,11 @@ app.get("/employees_search", async (req,res) => {
       res.render("pages/employees_search", { emps: emps_records, currentPage_trans, type: user_type});
     }
   }catch(error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).send(
+      '<script> alert("Internal Server Error"); </script>'+
+      '<script> window.location.href = "/"; </script>'
+    );
+    //res.status(500).json({ message: error.message });
   }
   // else {}
 });
