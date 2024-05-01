@@ -213,6 +213,7 @@ async function getNextPetID() {
 
 module.exports = {
   petSearch,
+  checkForDuplicates,
   getPetById,
   getPets,
   editPet,
